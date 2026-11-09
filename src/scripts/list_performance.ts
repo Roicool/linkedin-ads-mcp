@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import '../lib/env.js';
 import { LinkedInApiClient } from '../lib/linkedin-api.js';
 import { TokenStore } from '../auth/token-store.js';
 

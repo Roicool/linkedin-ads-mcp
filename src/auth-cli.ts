@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import 'dotenv/config';
+import './lib/env.js';
 import { TokenStore } from './auth/token-store.js';
 import { LinkedInOAuth } from './auth/oauth.js';
 

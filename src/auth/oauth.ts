@@ -12,7 +12,11 @@ const LINKEDIN_TOKEN_URL = 'https://www.linkedin.com/oauth/v2/accessToken';
 // - r_ads_reporting: Read ads analytics/reporting
 // - r_organization_social: Read organization posts (to get creative content/images)
 // - w_organization_social: Write organization content (upload images owned by org for ads)
-const SCOPES = ['rw_ads', 'r_ads_reporting', 'r_organization_social', 'w_organization_social'];
+// LINKEDIN_SCOPES (space- or comma-separated) overrides the list when the app was granted fewer scopes.
+const DEFAULT_SCOPES = ['rw_ads', 'r_ads_reporting', 'r_organization_social', 'w_organization_social'];
+const SCOPES = process.env.LINKEDIN_SCOPES
+  ? process.env.LINKEDIN_SCOPES.split(/[\s,]+/).filter(Boolean)
+  : DEFAULT_SCOPES;
 
 interface OAuthConfig {
   clientId: string;

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import 'dotenv/config';
+import '../lib/env.js';
 import * as fs from 'fs';
 import * as path from 'path';
 import { TokenStore } from '../auth/token-store.js';
