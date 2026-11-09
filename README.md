@@ -1,5 +1,11 @@
 # LinkedIn Ads MCP Server
 
+> [!NOTE]
+> **Roicool fork** of [danielpopamd/linkedin-ads-mcp](https://github.com/danielpopamd/linkedin-ads-mcp), adjusted for managing client accounts:
+> - **Targeting lookup:** `list_targeting_facets` and `search_targeting` return the URNs for `targetingCriteria` (titles, locations, industries, seniorities, company sizes, skills, …).
+> - **Draft-only creation:** `create_campaign_group`, `create_campaign`, `create_creative` and `create_inline_ad` refuse `ACTIVE`; everything is created as `DRAFT` and launched after review. Set `LINKEDIN_ALLOW_ACTIVE_CREATE=true` to lift this.
+> - **No deletes by default:** `delete_campaign` and `delete_campaign_group` are hidden and refused. Set `LINKEDIN_ENABLE_DELETE=true` to enable them.
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org)
 [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-blue)](https://modelcontextprotocol.io)

@@ -100,8 +100,8 @@ export class LinkedInApiClient {
           if (Array.isArray(value)) {
             // Arrays need List() wrapper
             queryParts.push(`${key}=List(${value.map(v => encodeURIComponent(v)).join(',')})`);
-          } else if (key === 'fields' || key === 'dateRange') {
-            // Fields and dateRange should not have their internal commas/colons encoded
+          } else if (key === 'fields' || key === 'dateRange' || key === 'locale') {
+            // Fields, dateRange and locale are Rest.li objects: their commas/colons must not be encoded
             queryParts.push(`${key}=${value}`);
           } else {
             queryParts.push(`${key}=${encodeURIComponent(String(value))}`);
@@ -1185,4 +1185,49 @@ export class LinkedInApiClient {
 
     return audiences;
   }
+
+  // ==================== Targeting ====================
+
+  /**
+   * Lists the targeting facets available to ad campaigns.
+   */
+  async listTargetingFacets(): Promise<TargetingFacet[]> {
+    const response = await this.request<LinkedInApiResponse<TargetingFacet>>('/rest/adTargetingFacets');
+    return response.elements || [];
+  }
+
+  /**
+   * Looks up targeting entities (URNs) in a facet: typeahead search when a query is given,
+   * otherwise the full value list of the facet.
+   */
+  async searchTargetingEntities(options: {
+    facetUrn: string;
+    query?: string;
+    language: string;
+    country: string;
+  }): Promise<TargetingEntity[]> {
+    const params: Record<string, string> = {
+      q: options.query ? 'typeahead' : 'adTargetingFacet',
+      queryVersion: 'QUERY_USES_URNS',
+      facet: options.facetUrn,
+      locale: `(language:${options.language},country:${options.country})`,
+    };
+    if (options.query) params.query = options.query;
+
+    const response = await this.request<LinkedInApiResponse<TargetingEntity>>('/rest/adTargetingEntities', { params });
+    return response.elements || [];
+  }
+}
+
+export interface TargetingFacet {
+  facetName: string;
+  adTargetingFacetUrn: string;
+  entityTypes?: string[];
+  availableEntityFinders?: string[];
+}
+
+export interface TargetingEntity {
+  urn: string;
+  name: string;
+  facetUrn?: string;
 }

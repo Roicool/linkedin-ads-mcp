@@ -73,9 +73,16 @@ import {
   uploadImageTool,
   handleUploadImage,
 } from './tools/campaign-management.js';
+import {
+  listTargetingFacetsTool,
+  searchTargetingTool,
+  handleListTargetingFacets,
+  handleSearchTargeting,
+} from './tools/targeting.js';
+import { ENABLE_DELETE, DELETE_TOOL_NAMES } from './lib/safety.js';
 
 // All available tools
-const TOOLS: Tool[] = [
+const ALL_TOOLS: Tool[] = [
   // Account Management
   listAdAccountsTool,
   getAccountDetailsTool,
@@ -107,7 +114,13 @@ const TOOLS: Tool[] = [
   createInlineAdTool,
   listCampaignsTool,
   uploadImageTool,
+  // Targeting
+  listTargetingFacetsTool,
+  searchTargetingTool,
 ];
+
+// Delete tools are hidden unless LINKEDIN_ENABLE_DELETE=true
+const TOOLS: Tool[] = ENABLE_DELETE ? ALL_TOOLS : ALL_TOOLS.filter(t => !DELETE_TOOL_NAMES.has(t.name));
 
 class LinkedInAdsMCPServer {
   private server: Server;
@@ -249,6 +262,14 @@ class LinkedInAdsMCPServer {
             break;
           case 'upload_image':
             result = await handleUploadImage(this.apiClient, args);
+            break;
+
+          // Targeting
+          case 'list_targeting_facets':
+            result = await handleListTargetingFacets(this.apiClient, args);
+            break;
+          case 'search_targeting':
+            result = await handleSearchTargeting(this.apiClient, args);
             break;
 
           default:

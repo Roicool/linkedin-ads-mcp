@@ -13,6 +13,7 @@ import {
   ListCampaignsInput,
   UploadImageInput,
 } from '../lib/types.js';
+import { assertDraftOnCreate, assertDeleteEnabled } from '../lib/safety.js';
 
 // ==================== Campaign Group Tools ====================
 
@@ -51,6 +52,7 @@ export async function handleCreateCampaignGroup(client: LinkedInApiClient, args:
   if (!input.accountId) throw new Error('accountId is required');
   if (!input.name) throw new Error('name is required');
   if (!input.startDate) throw new Error('startDate is required');
+  assertDraftOnCreate(input.status, 'Campaign group');
 
   const startTimestamp = new Date(input.startDate).getTime();
   const endTimestamp = input.endDate ? new Date(input.endDate).getTime() : undefined;
@@ -167,6 +169,7 @@ export async function handleDeleteCampaignGroup(client: LinkedInApiClient, args:
 
   if (!input.accountId) throw new Error('accountId is required');
   if (!input.campaignGroupId) throw new Error('campaignGroupId is required');
+  assertDeleteEnabled('delete_campaign_group');
 
   // First fetch the campaign group to check its current status
   const groups = await client.listCampaignGroups(input.accountId, {});
@@ -257,6 +260,7 @@ export async function handleCreateCampaign(client: LinkedInApiClient, args: unkn
   if (!input.dailyBudgetAmount) throw new Error('dailyBudgetAmount is required');
   if (!input.unitCostAmount) throw new Error('unitCostAmount is required');
   if (!input.targetingCriteria) throw new Error('targetingCriteria is required');
+  assertDraftOnCreate(input.status, 'Campaign');
 
   const currency = input.dailyBudgetCurrency || 'USD';
 
@@ -421,6 +425,7 @@ export async function handleDeleteCampaign(client: LinkedInApiClient, args: unkn
 
   if (!input.accountId) throw new Error('accountId is required');
   if (!input.campaignId) throw new Error('campaignId is required');
+  assertDeleteEnabled('delete_campaign');
 
   // Fetch campaign to determine if it's a draft
   const campaign = await client.getCampaign(input.accountId, input.campaignId);
@@ -509,6 +514,7 @@ export async function handleCreateCreative(client: LinkedInApiClient, args: unkn
   if (!input.accountId) throw new Error('accountId is required');
   if (!input.campaignId) throw new Error('campaignId is required');
   if (!input.contentReference) throw new Error('contentReference is required');
+  assertDraftOnCreate(input.intendedStatus, 'Creative');
 
   const data: Parameters<typeof client.createCreative>[1] = {
     campaign: input.campaignId,
@@ -583,6 +589,7 @@ export async function handleCreateInlineAd(client: LinkedInApiClient, args: unkn
   if (!input.campaignId) throw new Error('campaignId is required');
   if (!input.organizationId) throw new Error('organizationId is required');
   if (!input.commentary) throw new Error('commentary is required');
+  assertDraftOnCreate(input.intendedStatus, 'Ad');
 
   const data: Parameters<typeof client.createInlineCreative>[1] = {
     campaign: input.campaignId,
